@@ -20,13 +20,17 @@ async function main(sources : string,
     gas: 1_000_000
   }
 
-  return await postWithRetries(trx, senderKey, web3);
+  let r = await postWithRetries(trx, senderKey, web3);
+  console.log(r)
+  return r;
 }
 
 async function fetchPayloads(sources : string[]) : Promise<DelFiReporterPayload[]> {
   let sourcePromises = sources.map(async (source) => {
     try {
       let response = await fetch(source);
+      let r = response;
+      console.log(await response.clone().json())
       return response.json();
     } catch (e) {
       console.error(e);
@@ -57,10 +61,11 @@ function buildTrxData(payloads : DelFiReporterPayload[], functionSig : string) :
   let messages = payloads.reduce((a: string[], x) => a.concat(x.messages), []);
   let signatures = payloads.reduce((a: string[], x) => a.concat(x.signatures), []);
   let priceKeys = payloads.map(x => Object.keys(x.prices));
-  let symbols = new Set(priceKeys.reduce((acc, val) => acc.concat(val)));
+  let symbols = new Set(priceKeys.reduce((acc, val) => acc.concat(val)).map((x) => x.toUpperCase()));
 
   // see https://github.com/ethereum/web3.js/blob/2.x/packages/web3-eth-abi/src/AbiCoder.js#L112
   const coder = new AbiCoder();
+  console.log([...symbols]);
   return coder.encodeFunctionSignature(functionSig) +
     coder
     .encodeParameters(types, [messages, signatures, [...symbols]])

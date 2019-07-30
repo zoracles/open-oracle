@@ -2362,10 +2362,10 @@ eth-query@^2.0.2, eth-query@^2.1.0, eth-query@^2.1.2:
     json-rpc-random-id "^1.0.0"
     xtend "^4.0.1"
 
-eth-saddle@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/eth-saddle/-/eth-saddle-0.0.5.tgz#201fa814881b01cc8b47b8b6626ac499a46f25c3"
-  integrity sha512-yGPIs4iVqYlJOdUmjRWuruKkenkQnhCThPTxQknWTiZEAErNvSwzug+UkfrE9D3BvXQEau5cyqcDkHbaKa/owA==
+eth-saddle@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/eth-saddle/-/eth-saddle-0.0.10.tgz#db3b6fbcc38cb8b3ce04f94a3bffdc99d423e2e5"
+  integrity sha512-K2oXEE4j97sTZArYEO5lnZVwoIQ1A6WADnnzFE4yyfMXG/QdLdsLcDJFgb/H9EmKuYE/EKqLSgatBTRowFIzgA==
   dependencies:
     truffle-hdwallet-provider "^1.0.10"
     web3 "1.0.0-beta.55"

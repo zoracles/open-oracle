@@ -12,14 +12,14 @@ contract OpenOraclePriceData is OpenOracleData {
     /**
      * @notice The event emitted when a source writes to its storage
      */
-    event Write(address indexed source, string key, uint64 timestamp, uint64 value);
+    event Write(address indexed source, string key, uint timestamp, uint value);
 
     /**
      * @notice The fundamental unit of storage for a reporter source
      */
     struct Datum {
-        uint64 timestamp;
-        uint64 value;
+        uint timestamp;
+        uint value;
     }
 
     /**
@@ -27,6 +27,11 @@ contract OpenOraclePriceData is OpenOracleData {
      * @dev This is private because dynamic mapping keys preclude auto-generated getters.
      */
     mapping(address => mapping(string => Datum)) private data;
+
+    string public lastType;
+    uint public lastTimestamp;
+    string public lastKey;
+    uint public lastValue;
 
     /**
      * @notice Write a bunch of signed datum to the authenticated storage mapping
@@ -39,8 +44,12 @@ contract OpenOraclePriceData is OpenOracleData {
         address source = source(message, signature);
 
         // Decode the message and check the kind
-        (string memory kind, uint64 timestamp, string memory key, uint64 value) = abi.decode(message, (string, uint64, string, uint64));
-        require(keccak256(abi.encodePacked(kind)) == keccak256(abi.encodePacked("prices")), "Kind of data must be 'prices'");
+        (string memory kind, uint timestamp, string memory key, uint value) = abi.decode(message, (string, uint, string, uint));
+        /* require(keccak256(abi.encodePacked(kind)) == keccak256(abi.encodePacked("prices")), "Kind of data must be 'prices'"); */
+        lastType = kind;
+        lastTimestamp = timestamp;
+        lastKey = key;
+        lastValue = value;
 
         // Only update if newer than stored, according to source
         Datum storage prior = data[source][key];
@@ -58,7 +67,7 @@ contract OpenOraclePriceData is OpenOracleData {
      * @param key The selector for the value to return
      * @return The claimed Unix timestamp for the data and the price value (defaults to (0, 0))
      */
-    function get(address source, string calldata key) external view returns (uint64, uint64) {
+    function get(address source, string calldata key) external view returns (uint, uint) {
         Datum storage datum = data[source][key];
         return (datum.timestamp, datum.value);
     }
@@ -69,7 +78,7 @@ contract OpenOraclePriceData is OpenOracleData {
      * @param key The selector for the value to return
      * @return The price value (defaults to 0)
      */
-    function getPrice(address source, string calldata key) external view returns (uint64) {
+    function getPrice(address source, string calldata key) external view returns (uint) {
         return data[source][key].value;
     }
 }
